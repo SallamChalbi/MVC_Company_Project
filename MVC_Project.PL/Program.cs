@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using MVC_Project.BLL.Interfaces;
+using MVC_Project.BLL.Repositories;
 using MVC_Project.DAL.Contexts;
 
 namespace MVC_Project.PL
@@ -15,6 +17,7 @@ namespace MVC_Project.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"));
             });
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
             var app = builder.Build();
 
