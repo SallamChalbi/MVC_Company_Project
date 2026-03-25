@@ -13,7 +13,8 @@ namespace MVC_Project.PL.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var Department = _repository.GetAll();
+            return View(Department);
         }
     }
 }
