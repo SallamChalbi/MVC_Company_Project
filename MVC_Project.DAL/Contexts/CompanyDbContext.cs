@@ -10,8 +10,12 @@ namespace MVC_Project.DAL.Contexts
 {
     public class CompanyDbContext: DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer("Server = .; Database = CompanyMVCProject; Trusted_Connection = true");
+        public CompanyDbContext(DbContextOptions<CompanyDbContext> options): base(options)
+        {
+        }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //    => optionsBuilder.UseSqlServer("Server = .; Database = CompanyMVCProject; Trusted_Connection = true");
 
         public DbSet<Department> Departments { get; set; }
     }
