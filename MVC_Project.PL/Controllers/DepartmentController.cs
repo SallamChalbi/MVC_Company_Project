@@ -65,9 +65,33 @@ namespace MVC_Project.PL.Controllers
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
-                    throw;
                 }
             }
+            return View(department);
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            return Details(id, "Delete");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Take Id from browser only
+        public IActionResult Delete([FromRoute] int id, Department department)
+        {
+            if (id != department.Id)
+                return BadRequest();
+
+            try
+            {
+                _repository.Delete(department);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
             return View(department);
         }
     }
