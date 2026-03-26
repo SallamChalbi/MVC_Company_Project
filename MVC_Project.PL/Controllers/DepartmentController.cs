@@ -33,5 +33,15 @@ namespace MVC_Project.PL.Controllers
             }
             return View(department);
         }
+
+        public IActionResult Details(int? id)
+        {
+            if (id is null)
+                return BadRequest();
+            var department = _repository.GetById(id.Value);
+            if(department is null)
+                return NotFound();
+            return View(department);
+        }
     }
 }
