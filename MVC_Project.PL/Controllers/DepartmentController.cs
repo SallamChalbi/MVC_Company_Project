@@ -34,13 +34,40 @@ namespace MVC_Project.PL.Controllers
             return View(department);
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(int? id, string viewName = "Details")
         {
             if (id is null)
                 return BadRequest();
             var department = _repository.GetById(id.Value);
             if(department is null)
                 return NotFound();
+            return View(viewName, department);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            return Details(id, "Edit");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Take Id from browser only
+        public IActionResult Edit([FromRoute]int id, Department department)
+        {
+            if(id != department.Id)
+                return BadRequest();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _repository.Update(department);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    throw;
+                }
+            }
             return View(department);
         }
     }
