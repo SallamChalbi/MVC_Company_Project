@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using MVC_Project.BLL.Interfaces;
+using MVC_Project.BLL.Repositories;
+using MVC_Project.DAL.Contexts;
+
 namespace MVC_Project.PL
 {
     public class Program
@@ -8,6 +13,11 @@ namespace MVC_Project.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"));
+            });
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 
             var app = builder.Build();
 
