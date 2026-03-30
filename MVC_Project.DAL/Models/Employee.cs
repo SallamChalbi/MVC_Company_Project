@@ -17,6 +17,7 @@ namespace MVC_Project.DAL.Models
         public string? Name { get; set; }
         [Range(22, 40, ErrorMessage = "Age must be in Range from 22 to 40")]
         public int Age { get; set; }
+        [Required(ErrorMessage = "Adress is Required!")]
         [RegularExpression("^[0-9]{1,3}-[a-zA-Z]{5,10}-[a-zA-Z]{4,10}-[a-zA-Z]{5,10}$",
             ErrorMessage = "Adress must be Like \'123-Street-City-Country\'")]
         public string? Address { get; set; }
