@@ -14,6 +14,12 @@ namespace MVC_Project.PL.Controllers
         }
         public IActionResult Index()
         {
+            /// Data Binding 
+            // 1. KeyValuePair => Dictionary object 
+            ViewData["Message"] = "Viw Data";
+            // 2. Dynamic Property => Dynamic keyword 
+            ViewBag.Message = "View Bag";
+            // => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
             var Employees = _repository.GetAll();
             return View(Employees);
         }
@@ -28,7 +34,10 @@ namespace MVC_Project.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.Add(employee);
+                if (_repository.Add(employee) > 0)
+                    // 3. KeyValuePair => Dictionary object 
+                    // Transfer Data from Action to Action 
+                    TempData["Message"] = "Employee Created Successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);
