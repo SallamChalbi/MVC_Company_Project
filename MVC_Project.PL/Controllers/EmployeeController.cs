@@ -4,14 +4,14 @@ using MVC_Project.DAL.Models;
 
 namespace MVC_Project.PL.Controllers
 {
-    public class DepartmentController : Controller
+    public class EmployeeController : Controller
     {
-        private readonly IDepartmentRepository _repository;
-        public DepartmentController(IDepartmentRepository repository)
+        private readonly IEmployeeRepository _repository;
+
+        public EmployeeController(IEmployeeRepository repository)
         {
             _repository = repository;
         }
-
         public IActionResult Index()
         {
             /// Data Binding 
@@ -20,8 +20,8 @@ namespace MVC_Project.PL.Controllers
             // 2. Dynamic Property => Dynamic keyword 
             ViewBag.Message = "View Bag";
             // => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
-            var Departments = _repository.GetAll();
-            return View(Departments);
+            var Employees = _repository.GetAll();
+            return View(Employees);
         }
 
         [HttpGet]
@@ -30,27 +30,27 @@ namespace MVC_Project.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Department department)
+        public IActionResult Create(Employee employee)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                if (_repository.Add(department) > 0)
+                if (_repository.Add(employee) > 0)
                     // 3. KeyValuePair => Dictionary object 
                     // Transfer Data from Action to Action 
-                    TempData["Message"] = "Department Created Successfully!";
+                    TempData["Message"] = "Employee Created Successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return View(employee);
         }
 
         public IActionResult Details(int? id, string viewName = "Details")
         {
             if (id is null)
                 return BadRequest();
-            var department = _repository.GetById(id.Value);
-            if(department is null)
+            var employee = _repository.GetById(id.Value);
+            if (employee is null)
                 return NotFound();
-            return View(viewName, department);
+            return View(viewName, employee);
         }
 
         [HttpGet]
@@ -60,15 +60,15 @@ namespace MVC_Project.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken] // Take Id from browser only
-        public IActionResult Edit([FromRoute]int id, Department department)
+        public IActionResult Edit([FromRoute] int id, Employee employee)
         {
-            if(id != department.Id)
+            if (id != employee.Id)
                 return BadRequest();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _repository.Update(department);
+                    _repository.Update(employee);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -76,7 +76,7 @@ namespace MVC_Project.PL.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
-            return View(department);
+            return View(employee);
         }
 
         [HttpGet]
@@ -86,14 +86,14 @@ namespace MVC_Project.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken] // Take Id from browser only
-        public IActionResult Delete([FromRoute] int id, Department department)
+        public IActionResult Delete([FromRoute] int id, Employee employee)
         {
-            if (id != department.Id)
+            if (id != employee.Id)
                 return BadRequest();
 
             try
             {
-                _repository.Delete(department);
+                _repository.Delete(employee);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -101,7 +101,7 @@ namespace MVC_Project.PL.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return View(department);
+            return View(employee);
         }
     }
 }

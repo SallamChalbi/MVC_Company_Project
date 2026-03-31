@@ -1,9 +1,9 @@
-﻿@model Department
+﻿@model Employee
 @{
     ViewData["Title"] = "Delete";
 }
 
-<h1 class="m-3">Are You Sure You Want To Delete <span class="text-danger">@Model.Name</span> Department?</h1>
+<h1 class="m-3">Are You Sure You Want To Delete <span class="text-danger">@Model.Name</span> Employee?</h1>
 
 <div asp-validation-summary="All"></div>
 <form asp-action="Delete">

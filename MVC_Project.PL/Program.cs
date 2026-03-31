@@ -18,6 +18,7 @@ namespace MVC_Project.PL
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"));
             });
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             var app = builder.Build();
 

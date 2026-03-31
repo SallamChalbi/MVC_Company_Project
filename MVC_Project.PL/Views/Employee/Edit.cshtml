@@ -1,9 +1,9 @@
-﻿@model Department
+﻿@model Employee
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit <span class="text-info">@Model.Name</span> Department</h1>
+<h1>Edit <span class="text-info">@Model.Name</span> Employee</h1>
 
 <div asp-validation-summary="All"></div>
 <form asp-action="Edit">
@@ -14,6 +14,6 @@
         <a class="btn btn-light" asp-action="Index">Back To List</a>
     </div>
 </form>
-@section ValidationSection{
+@section ValidationSection {
     <partial name="_ValidationScriptsPartial" />
 }
