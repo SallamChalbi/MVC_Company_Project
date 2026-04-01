@@ -6,11 +6,15 @@ namespace MVC_Project.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _repository;
+        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IEnumerable<Department> departments;
 
-        public EmployeeController(IEmployeeRepository repository)
+        public EmployeeController(IEmployeeRepository repository, IDepartmentRepository departmentRepository)
         {
-            _repository = repository;
+            _employeeRepository = repository;
+            _departmentRepository = departmentRepository;
+            departments = _departmentRepository.GetAll();
         }
         public IActionResult Index()
         {
@@ -20,13 +24,15 @@ namespace MVC_Project.PL.Controllers
             // 2. Dynamic Property => Dynamic keyword 
             ViewBag.Message = "View Bag";
             // => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
-            var Employees = _repository.GetAll();
+            var Employees = _employeeRepository.GetAll();
             return View(Employees);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
+            //ViewData["Departments"] = _departmentRepository.GetAll();
+            ViewBag.Departments = departments;
             return View();
         }
         [HttpPost]
@@ -34,12 +40,13 @@ namespace MVC_Project.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_repository.Add(employee) > 0)
+                if (_employeeRepository.Add(employee) > 0)
                     // 3. KeyValuePair => Dictionary object 
                     // Transfer Data from Action to Action 
                     TempData["Message"] = "Employee Created Successfully!";
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Departments = departments;
             return View(employee);
         }
 
@@ -47,15 +54,17 @@ namespace MVC_Project.PL.Controllers
         {
             if (id is null)
                 return BadRequest();
-            var employee = _repository.GetById(id.Value);
+            var employee = _employeeRepository.GetById(id.Value);
             if (employee is null)
                 return NotFound();
+            
             return View(viewName, employee);
         }
 
         [HttpGet]
         public IActionResult Edit(int? id)
         {
+            ViewBag.Departments = departments;
             return Details(id, "Edit");
         }
         [HttpPost]
@@ -68,7 +77,7 @@ namespace MVC_Project.PL.Controllers
             {
                 try
                 {
-                    _repository.Update(employee);
+                    _employeeRepository.Update(employee);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -76,6 +85,7 @@ namespace MVC_Project.PL.Controllers
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
+            ViewBag.Departments = departments;
             return View(employee);
         }
 
@@ -93,7 +103,7 @@ namespace MVC_Project.PL.Controllers
 
             try
             {
-                _repository.Delete(employee);
+                _employeeRepository.Delete(employee);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

@@ -35,6 +35,6 @@ namespace MVC_Project.DAL.Models
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
         public int? DepartmentId { get; set; }
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
     }
 }

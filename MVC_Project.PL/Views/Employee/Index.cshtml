@@ -24,6 +24,7 @@
                 <th>@Html.DisplayNameFor(E => E.Name)</th>
                 <th>@Html.DisplayNameFor(E => E.Age)</th>
                 <th>@Html.DisplayNameFor(E => E.Salary)</th>
+                <th>@Html.DisplayNameFor(E => E.Department)</th>
                 <th>@Html.DisplayNameFor(E => E.Address)</th>
                 <th>@Html.DisplayNameFor(E => E.Email)</th>
                 <th>@Html.DisplayNameFor(E => E.PhoneNumber)</th>
@@ -41,6 +42,16 @@
                     <td>@employee.Name</td>
                     <td>@employee.Age</td>
                     <td>@Html.DisplayFor(E => employee.Salary)</td>
+                    <td>
+                        @if(employee.Department is not null)
+                        {
+                            @employee.Department.Name
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Department</span>
+                        }
+                    </td>
                     <td>@employee.Address</td>
                     <td>@Html.DisplayFor(E => employee.Email)</td>
                     <td>@employee.PhoneNumber</td>

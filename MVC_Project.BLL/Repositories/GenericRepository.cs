@@ -1,4 +1,5 @@
-﻿using MVC_Project.BLL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MVC_Project.BLL.Interfaces;
 using MVC_Project.DAL.Contexts;
 using MVC_Project.DAL.Models;
 using System;
@@ -30,7 +31,11 @@ namespace MVC_Project.BLL.Repositories
         }
 
         public IEnumerable<T> GetAll()
-            => _dbContext.Set<T>().ToList();
+        {
+            if (typeof(T) == typeof(Employee))
+                return (IEnumerable<T>)_dbContext.Employees.Include(E => E.Department).ToList();
+            return _dbContext.Set<T>().ToList();
+        }
 
         public T? GetById(int id)
             => _dbContext.Set<T>().Find(id);
