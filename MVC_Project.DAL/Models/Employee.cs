@@ -33,5 +33,8 @@ namespace MVC_Project.DAL.Models
         public string? PhoneNumber { get; set; }
         public DateTime HireDate { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now;
+
+        public int? DepartmentId { get; set; }
+        public Department Department { get; set; }
     }
 }
