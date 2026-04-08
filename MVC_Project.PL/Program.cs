@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MVC_Project.BLL.Interfaces;
 using MVC_Project.BLL.Repositories;
 using MVC_Project.DAL.Contexts;
+using MVC_Project.PL.MappingProfiles;
 
 namespace MVC_Project.PL
 {
@@ -19,6 +20,13 @@ namespace MVC_Project.PL
             });
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            //builder.Services.AddTransient<,>();// Lifetime : Object Per Operation 
+            //builder.Services.AddScoped<,>();// Lifetime : Object Per Request 
+            //builder.Services.AddSingleton<,>();// Lifetime : Object Per Session (Application) 
+
+            //builder.Services.AddAutoMapper(m => m.AddProfile(new EmployeeProfile()));
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             var app = builder.Build();
 
