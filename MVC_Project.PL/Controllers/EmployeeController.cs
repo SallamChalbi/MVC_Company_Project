@@ -22,17 +22,23 @@ namespace MVC_Project.PL.Controllers
             _mapper = mapper;
             //departments = _departmentRepository.GetAll();
         }
-        public IActionResult Index()
+        public IActionResult Index(string SearchValue)
         {
-            /// Data Binding 
-            // 1. KeyValuePair => Dictionary object 
-            ViewData["Message"] = "Viw Data";
-            // 2. Dynamic Property => Dynamic keyword 
-            ViewBag.Message = "View Bag";
-            // => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
-            var employees = _employeeRepository.GetAll();
+            ///// Data Binding 
+            //// 1. KeyValuePair => Dictionary object 
+            //ViewData["Message"] = "Viw Data";
+            //// 2. Dynamic Property => Dynamic keyword 
+            //ViewBag.Message = "View Bag";
+            //// => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
+
+            IEnumerable<Employee> employees;
+            if (string.IsNullOrEmpty(SearchValue))
+                employees = _employeeRepository.GetAll();
+            else
+                employees = _employeeRepository.GetEmployeesByName(SearchValue);
             var reverseMappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
-                                   //or _mapper.Map<IEnumerable<EmployeeViewModel>>(employees);
+            //or _mapper.Map<IEnumerable<EmployeeViewModel>>(employees);
+            ViewBag.InputValue = SearchValue;
             return View(reverseMappedEmployee);
         }
 
