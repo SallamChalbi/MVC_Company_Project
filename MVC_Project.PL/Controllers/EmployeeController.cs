@@ -8,17 +8,21 @@ namespace MVC_Project.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly IDepartmentRepository _departmentRepository;
+        //private readonly IEmployeeRepository _employeeRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         //private readonly IEnumerable<Department> departments;
 
-        public EmployeeController(IEmployeeRepository repository, 
-            IDepartmentRepository departmentRepository, 
+        public EmployeeController(
+            //IEmployeeRepository repository, 
+            //IDepartmentRepository departmentRepository, 
+            IUnitOfWork unitOfWork,
             IMapper mapper)
         {
-            _employeeRepository = repository;
-            _departmentRepository = departmentRepository;
+            //_employeeRepository = repository;
+            //_departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             //departments = _departmentRepository.GetAll();
         }
@@ -33,9 +37,11 @@ namespace MVC_Project.PL.Controllers
 
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchValue))
-                employees = _employeeRepository.GetAll();
+                //employees = _employeeRepository.GetAll();
+                employees = _unitOfWork.EmployeeRepository.GetAll();
             else
-                employees = _employeeRepository.GetEmployeesByName(SearchValue);
+                //employees = _employeeRepository.GetEmployeesByName(SearchValue);
+                employees = _unitOfWork.EmployeeRepository.GetEmployeesByName(SearchValue);
             var reverseMappedEmployee = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(employees);
             //or _mapper.Map<IEnumerable<EmployeeViewModel>>(employees);
             ViewBag.InputValue = SearchValue;
@@ -55,8 +61,9 @@ namespace MVC_Project.PL.Controllers
             if (ModelState.IsValid)
             {
                 var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                                //or _mapper.Map<Employee>(employeeVM);
-                if (_employeeRepository.Add(mappedEmployee) > 0)
+                //or _mapper.Map<Employee>(employeeVM);
+                _unitOfWork.EmployeeRepository.Add(mappedEmployee);
+                if (_unitOfWork.Complete() > 0)
                     // 3. KeyValuePair => Dictionary object 
                     // Transfer Data from Action to Action 
                     TempData["Message"] = "Employee Created Successfully!";
@@ -70,7 +77,7 @@ namespace MVC_Project.PL.Controllers
         {
             if (id is null)
                 return BadRequest();
-            var employee = _employeeRepository.GetById(id.Value);
+            var employee = _unitOfWork.EmployeeRepository.GetById(id.Value);
             if (employee is null)
                 return NotFound();
             return View(viewName, _mapper.Map<Employee, EmployeeViewModel>(employee));
@@ -93,7 +100,8 @@ namespace MVC_Project.PL.Controllers
                 try
                 {
                     var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                    _employeeRepository.Update(mappedEmployee);
+                    _unitOfWork.EmployeeRepository.Update(mappedEmployee);
+                    _unitOfWork.Complete();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -120,7 +128,8 @@ namespace MVC_Project.PL.Controllers
             try
             {
                 var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
-                _employeeRepository.Delete(mappedEmployee);
+                _unitOfWork.EmployeeRepository.Delete(mappedEmployee);
+                _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

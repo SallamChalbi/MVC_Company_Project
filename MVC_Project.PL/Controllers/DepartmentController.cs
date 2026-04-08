@@ -8,12 +8,17 @@ namespace MVC_Project.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository _repository;
+        //private readonly IDepartmentRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentRepository repository, IMapper mapper)
+        public DepartmentController(
+            //IDepartmentRepository repository, 
+            IUnitOfWork unitOfWork,
+            IMapper mapper)
         {
-            _repository = repository;
+            //_repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,7 +30,8 @@ namespace MVC_Project.PL.Controllers
             // 2. Dynamic Property => Dynamic keyword 
             ViewBag.Message = "View Bag";
             // => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
-            var Departments = _repository.GetAll();
+            //var Departments = _repository.GetAll();
+            var Departments = _unitOfWork.DepartmentRepository.GetAll();
             var reverseMappedDepartment = _mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(Departments);
                                      //or _mapper.Map<IEnumerable<DepartmentViewModel>>(Departments);
             return View(reverseMappedDepartment);
@@ -42,8 +48,9 @@ namespace MVC_Project.PL.Controllers
             if(ModelState.IsValid)
             {
                 var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                                 // or _mapper.Map<Department>(departmentVM)
-                if (_repository.Add(mappedDepartment) > 0)
+                // or _mapper.Map<Department>(departmentVM)
+                _unitOfWork.DepartmentRepository.Add(mappedDepartment);
+                if (_unitOfWork.Complete() > 0)
                     // 3. KeyValuePair => Dictionary object 
                     // Transfer Data from Action to Action 
                     TempData["Message"] = "Department Created Successfully!";
@@ -56,7 +63,7 @@ namespace MVC_Project.PL.Controllers
         {
             if (id is null)
                 return BadRequest();
-            var department = _repository.GetById(id.Value);
+            var department = _unitOfWork.DepartmentRepository.GetById(id.Value);
             if(department is null)
                 return NotFound();
 
@@ -79,7 +86,8 @@ namespace MVC_Project.PL.Controllers
                 try
                 {
                     var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
-                    _repository.Update(mappedDepartment);
+                    _unitOfWork.DepartmentRepository.Update(mappedDepartment);
+                    _unitOfWork.Complete();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -104,7 +112,8 @@ namespace MVC_Project.PL.Controllers
 
             try
             {
-                _repository.Delete(_mapper.Map<DepartmentViewModel, Department>(departmentVM));
+                _unitOfWork.DepartmentRepository.Delete(_mapper.Map<DepartmentViewModel, Department>(departmentVM));
+                _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
