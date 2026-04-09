@@ -7,6 +7,7 @@
 
 <div asp-validation-summary="All" class="text-danger"></div>
 <form asp-action="Edit" enctype="multipart/form-data">
+    <input hidden asp-for="ImageName" />
     <partial name="PartialViews/_CreateEditPartialView" />
 
     <div class="mt-3">

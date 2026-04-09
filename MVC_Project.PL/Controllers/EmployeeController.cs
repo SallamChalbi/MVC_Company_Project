@@ -61,7 +61,8 @@ namespace MVC_Project.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+                if (employeeVM.Image is not null)
+                    employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
                 var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                 //or _mapper.Map<Employee>(employeeVM);
                 _unitOfWork.EmployeeRepository.Add(mappedEmployee);
@@ -101,7 +102,8 @@ namespace MVC_Project.PL.Controllers
             {
                 try
                 {
-                    employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
+                    if(employeeVM.Image is not null)
+                        employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
                     var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                     _unitOfWork.EmployeeRepository.Update(mappedEmployee);
                     _unitOfWork.Complete();
@@ -131,6 +133,8 @@ namespace MVC_Project.PL.Controllers
             try
             {
                 var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
+                if(!string.IsNullOrEmpty(mappedEmployee.ImageName))
+                    DocumentSettings.DeleteFile(mappedEmployee.ImageName, "Images");
                 _unitOfWork.EmployeeRepository.Delete(mappedEmployee);
                 _unitOfWork.Complete();
                 return RedirectToAction(nameof(Index));

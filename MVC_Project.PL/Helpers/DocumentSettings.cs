@@ -14,5 +14,15 @@
             }
             return fileName;
         }
+
+        public static void DeleteFile(string fileName, string folderName)
+        {
+            if(fileName is not null && folderName is not null)
+            {
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\Files", folderName, fileName);
+                if (File.Exists(folderPath))
+                    File.Delete(folderPath);
+            }
+        }
     }
 }
