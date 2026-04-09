@@ -22,6 +22,7 @@ namespace MVC_Project.DAL.Models
         public bool IsActive { get; set; }
         [Required]
         public string? Email { get; set; }
+        public string? ImageName { get; set; }
         [Required]
         public string? PhoneNumber { get; set; }
         public DateTime HireDate { get; set; }

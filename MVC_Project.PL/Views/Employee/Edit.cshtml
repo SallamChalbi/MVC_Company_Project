@@ -6,7 +6,7 @@
 <h1>Edit <span class="text-info">@Model.Name</span> Employee</h1>
 
 <div asp-validation-summary="All" class="text-danger"></div>
-<form asp-action="Edit">
+<form asp-action="Edit" enctype="multipart/form-data">
     <partial name="PartialViews/_CreateEditPartialView" />
 
     <div class="mt-3">

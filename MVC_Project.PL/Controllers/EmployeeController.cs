@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC_Project.BLL.Interfaces;
 using MVC_Project.DAL.Models;
+using MVC_Project.PL.Helpers;
 using MVC_Project.PL.ViewModels;
 
 namespace MVC_Project.PL.Controllers
@@ -60,6 +61,7 @@ namespace MVC_Project.PL.Controllers
         {
             if (ModelState.IsValid)
             {
+                employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
                 var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                 //or _mapper.Map<Employee>(employeeVM);
                 _unitOfWork.EmployeeRepository.Add(mappedEmployee);
@@ -99,6 +101,7 @@ namespace MVC_Project.PL.Controllers
             {
                 try
                 {
+                    employeeVM.ImageName = DocumentSettings.UploadFile(employeeVM.Image, "Images");
                     var mappedEmployee = _mapper.Map<EmployeeViewModel, Employee>(employeeVM);
                     _unitOfWork.EmployeeRepository.Update(mappedEmployee);
                     _unitOfWork.Complete();

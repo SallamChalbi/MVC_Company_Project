@@ -28,6 +28,8 @@ namespace MVC_Project.PL.ViewModels
         public string? PhoneNumber { get; set; }
         public DateTime HireDate { get; set; }
 
+        public IFormFile? Image { get; set; }
+        public string? ImageName { get; set; }
         public int? DepartmentId { get; set; }
         public Department? Department { get; set; }
     }
