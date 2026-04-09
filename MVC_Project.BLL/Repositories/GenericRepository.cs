@@ -1,4 +1,5 @@
-﻿using MVC_Project.BLL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MVC_Project.BLL.Interfaces;
 using MVC_Project.DAL.Contexts;
 using MVC_Project.DAL.Models;
 using System;
@@ -17,28 +18,23 @@ namespace MVC_Project.BLL.Repositories
         {
             _dbContext = dbContext;
         }
-        public int Add(T entity)
-        {
-            _dbContext.Set<T>().Add(entity);
-            return _dbContext.SaveChanges();
-        }
+        public void Add(T entity)
+            => _dbContext.Set<T>().Add(entity);
 
-        public int Delete(T entity)
-        {
-            _dbContext.Set<T>().Remove(entity);
-            return _dbContext.SaveChanges();
-        }
+        public void Delete(T entity)
+            => _dbContext.Set<T>().Remove(entity);
 
         public IEnumerable<T> GetAll()
-            => _dbContext.Set<T>().ToList();
+        {
+            if (typeof(T) == typeof(Employee))
+                return (IEnumerable<T>)_dbContext.Employees.Include(E => E.Department).ToList();
+            return _dbContext.Set<T>().ToList();
+        }
 
         public T? GetById(int id)
             => _dbContext.Set<T>().Find(id);
 
-        public int Update(T entity)
-        {
-            _dbContext.Set<T>().Update(entity);
-            return _dbContext.SaveChanges();
-        }
+        public void Update(T entity)
+            => _dbContext.Set<T>().Update(entity);
     }
 }

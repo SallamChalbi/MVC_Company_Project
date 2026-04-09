@@ -1,4 +1,10 @@
-﻿@model Employee
+﻿@model EmployeeViewModel
+@inject IUnitOfWork unitOfWork
+@{
+    // var departments = new SelectList(ViewData["Departments"] as IEnumerable<Department>, "Id", "Name");
+    // var departments = new SelectList(ViewBag.Departments, "Id", "Name");
+    var departments = new SelectList(unitOfWork.DepartmentRepository.GetAll(), "Id", "Name");
+}
 
 <div class="form-group">
     <label class="col-form-label" asp-for="Name"></label>
@@ -29,6 +35,16 @@
     <label class="col-form-label" asp-for="PhoneNumber"></label>
     <input class="form-control" asp-for="PhoneNumber" />
     <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+</div>
+<div class="form-group">
+    <label class="col-form-label" asp-for="Department"></label>
+    <select class="form-control" asp-items="@departments" asp-for="DepartmentId">
+        <option value="@null">----- Select Department -----</option>
+    </select>
+</div>
+<div class="form-group">
+    <label class="col-form-label" asp-for="Image"></label>
+    <input class="form-control" asp-for="Image" />
 </div>
 <div class="form-group mt-2">
     <input class="form-check-input fs-4" asp-for="IsActive" />

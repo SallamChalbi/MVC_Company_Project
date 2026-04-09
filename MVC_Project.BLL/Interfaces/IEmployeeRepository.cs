@@ -9,6 +9,7 @@ namespace MVC_Project.BLL.Interfaces
 {
     public interface IEmployeeRepository: IGenericRepository<Employee>
     {
-        IQueryable<Employee> GetEmployeesByAdress(string adress);
+        //IQueryable<Employee> GetEmployeesByAdress(string adress);
+        IQueryable<Employee> GetEmployeesByName(string name);
     }
 }

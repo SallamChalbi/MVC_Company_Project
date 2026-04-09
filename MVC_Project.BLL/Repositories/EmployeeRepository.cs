@@ -1,4 +1,5 @@
-﻿using MVC_Project.BLL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MVC_Project.BLL.Interfaces;
 using MVC_Project.DAL.Contexts;
 using MVC_Project.DAL.Models;
 using System;
@@ -18,7 +19,11 @@ namespace MVC_Project.BLL.Repositories
             _dbContext = dbContext;
         }
 
-        public IQueryable<Employee> GetEmployeesByAdress(string adress)
-            => _dbContext.Employees.Where(E => E.Address == adress);
+        //public IQueryable<Employee> GetEmployeesByAdress(string adress)
+        //    => _dbContext.Employees.Where(E => E.Address == adress);
+
+        public IQueryable<Employee> GetEmployeesByName(string name)
+            => _dbContext.Employees.Include(E => E.Department).Where(E => E.Name!.ToLower().Contains(name.ToLower()));
+        //=> _dbContext.Employees.Include(E => E.Department).Where(E => E.Name != null && E.Name.Contains(name, StringComparison.OrdinalIgnoreCase);
     }
 }

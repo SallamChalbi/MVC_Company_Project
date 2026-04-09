@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MVC_Project.DAL.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MVC_Project.DAL.Models
+namespace MVC_Project.PL.ViewModels
 {
-    public class Department
+    public class DepartmentViewModel
     {
         public int Id { get; set; }
+        [Range(10, 10_000)]
         public int Code { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Name is Required !!")]
         public string? Name { get; set; }
         public DateTime DateOfCreation { get; set; }
 
