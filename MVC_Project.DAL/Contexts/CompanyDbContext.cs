@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MVC_Project.DAL.Configurations;
 using MVC_Project.DAL.Models;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MVC_Project.DAL.Contexts
 {
-    public class CompanyDbContext: DbContext
+    public class CompanyDbContext: IdentityDbContext
     {
         public CompanyDbContext(DbContextOptions<CompanyDbContext> options): base(options)
         {
