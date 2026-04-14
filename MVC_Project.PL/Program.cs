@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.BLL.Interfaces;
 using MVC_Project.BLL.Repositories;
 using MVC_Project.DAL.Contexts;
+using MVC_Project.DAL.Models;
 using MVC_Project.PL.MappingProfiles;
 
 namespace MVC_Project.PL
@@ -28,6 +30,14 @@ namespace MVC_Project.PL
 
             //builder.Services.AddAutoMapper(m => m.AddProfile(new EmployeeProfile()));
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireDigit = true;
+                options.Password.RequireUppercase = true;
+            }).AddEntityFrameworkStores<CompanyDbContext>();
+            builder.Services.AddAuthentication();
 
             var app = builder.Build();
 
