@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="main-agileinfo">
+	<div class="agileits-top">
+		<form action="#" method="post">
+			<input class="text" type="text" name="Username" placeholder="Username" required="">
+			<input class="text email" type="email" name="email" placeholder="Email" required="">
+			<div class="password-wrapper">
+				<input class="text" type="password" id="password" name="password" placeholder="Password" required="">
+				<span class="toggle-password" onclick="togglePassword('password', this)">
+					<i class="fa fa-eye"></i>
+				</span>
+			</div>
+
+			<div class="password-wrapper">
+				<input class="text w3lpass" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required="">
+				<span class="toggle-password" onclick="togglePassword('confirmPassword', this)">
+					<i class="fa fa-eye"></i>
+				</span>
+			</div>
+			<div class="wthree-text">
+				<label class="anim">
+					<input type="checkbox" class="checkbox" required="">
+					<span>I Agree To The Terms & Conditions</span>
+				</label>
+				<div class="clear"> </div>
+			</div>
+			<input type="submit" value="SIGNUP">
+		</form>
+		<p>Do you have an Account? <a href="#"> Login Now!</a></p>
+	</div>
+</div>
+@section ValidationSection {
+	<partial name="_ValidationScriptsPartial" />
+}
