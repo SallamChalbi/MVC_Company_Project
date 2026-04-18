@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Project.BLL.Interfaces;
 using MVC_Project.DAL.Models;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace MVC_Project.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         //private readonly IDepartmentRepository _repository;

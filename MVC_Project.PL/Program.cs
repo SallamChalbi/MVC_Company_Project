@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.BLL.Interfaces;
@@ -37,8 +38,14 @@ namespace MVC_Project.PL
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
             }).AddEntityFrameworkStores<CompanyDbContext>();
-            
-            builder.Services.AddAuthentication();
+            //.AddDefaultTokenProviders();
+
+            builder.Services.AddAuthentication(/*CookieAuthenticationDefaults.AuthenticationScheme*/);
+                            //.AddCookie(opt =>
+                            //{
+                            //    opt.LoginPath = "Account/Login";
+                            //    opt.AccessDeniedPath = "Home/Error";
+                            //});
 
             var app = builder.Build();
 
@@ -55,6 +62,7 @@ namespace MVC_Project.PL
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
