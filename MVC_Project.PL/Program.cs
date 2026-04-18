@@ -37,6 +37,7 @@ namespace MVC_Project.PL
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
             }).AddEntityFrameworkStores<CompanyDbContext>();
+            
             builder.Services.AddAuthentication();
 
             var app = builder.Build();

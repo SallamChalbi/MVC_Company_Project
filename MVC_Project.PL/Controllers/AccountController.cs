@@ -9,10 +9,12 @@ namespace MVC_Project.PL.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
         public IActionResult Register()
         {
@@ -44,6 +46,26 @@ namespace MVC_Project.PL.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid) 
+            { 
+                var user = await _userManager.FindByEmailAsync(model.Email!);
+
+                if (user is not null)
+                    if (await _userManager.CheckPasswordAsync(user, model.Password!))
+                    { 
+                        var result = await _signInManager.PasswordSignInAsync(user, model.Password!, model.RememberMe, false);
+
+                        if (result.Succeeded)
+                            return RedirectToAction("Index", "Home");
+                    }
+                
+                ModelState.AddModelError(string.Empty, "Incorrect Email or Password");
+            }
+            return View(model);
         }
     }
 }
