@@ -23,10 +23,10 @@ namespace MVC_Project.BLL.Repositories
             _dbContext = dbContext;
         }
 
-        public int Complete()
-            => _dbContext.SaveChanges();
+        public async Task<int> CompleteAsync()
+            => await _dbContext.SaveChangesAsync();
 
-        public void Dispose()
-            => _dbContext.Dispose();
+        public async ValueTask DisposeAsync()
+            => await _dbContext.DisposeAsync();
     }
 }

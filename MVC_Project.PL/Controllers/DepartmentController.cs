@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Project.BLL.Interfaces;
 using MVC_Project.DAL.Models;
 using MVC_Project.PL.ViewModels;
+using System.Threading.Tasks;
 
 namespace MVC_Project.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         //private readonly IDepartmentRepository _repository;
@@ -22,7 +25,7 @@ namespace MVC_Project.PL.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             /// Data Binding 
             // 1. KeyValuePair => Dictionary object 
@@ -31,7 +34,7 @@ namespace MVC_Project.PL.Controllers
             ViewBag.Message = "View Bag";
             // => 1 & 2: Transfer Data from Action to it's View / from View to _Layout 
             //var Departments = _repository.GetAll();
-            var Departments = _unitOfWork.DepartmentRepository.GetAll();
+            var Departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             var reverseMappedDepartment = _mapper.Map<IEnumerable<Department>, IEnumerable<DepartmentViewModel>>(Departments);
                                      //or _mapper.Map<IEnumerable<DepartmentViewModel>>(Departments);
             return View(reverseMappedDepartment);
@@ -43,14 +46,14 @@ namespace MVC_Project.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Create(DepartmentViewModel departmentVM)
         {
             if(ModelState.IsValid)
             {
                 var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
                 // or _mapper.Map<Department>(departmentVM)
-                _unitOfWork.DepartmentRepository.Add(mappedDepartment);
-                if (_unitOfWork.Complete() > 0)
+                await _unitOfWork.DepartmentRepository.AddAsync(mappedDepartment);
+                if (await _unitOfWork.CompleteAsync() > 0)
                     // 3. KeyValuePair => Dictionary object 
                     // Transfer Data from Action to Action 
                     TempData["Message"] = "Department Created Successfully!";
@@ -59,11 +62,11 @@ namespace MVC_Project.PL.Controllers
             return View(departmentVM);
         }
 
-        public IActionResult Details(int? id, string viewName = "Details")
+        public async Task<IActionResult> Details(int? id, string viewName = "Details")
         {
             if (id is null)
                 return BadRequest();
-            var department = _unitOfWork.DepartmentRepository.GetById(id.Value);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(id.Value);
             if(department is null)
                 return NotFound();
 
@@ -71,13 +74,13 @@ namespace MVC_Project.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            return Details(id, "Edit");
+            return await Details(id, "Edit");
         }
         [HttpPost]
         [ValidateAntiForgeryToken] // Take Id from browser only
-        public IActionResult Edit([FromRoute]int id, DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Edit([FromRoute]int id, DepartmentViewModel departmentVM)
         {
             if(id != departmentVM.Id)
                 return BadRequest();
@@ -87,7 +90,7 @@ namespace MVC_Project.PL.Controllers
                 {
                     var mappedDepartment = _mapper.Map<DepartmentViewModel, Department>(departmentVM);
                     _unitOfWork.DepartmentRepository.Update(mappedDepartment);
-                    _unitOfWork.Complete();
+                    await _unitOfWork.CompleteAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -99,13 +102,13 @@ namespace MVC_Project.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            return Details(id, "Delete");
+            return await Details(id, "Delete");
         }
         [HttpPost]
         [ValidateAntiForgeryToken] // Take Id from browser only
-        public IActionResult Delete([FromRoute] int id, DepartmentViewModel departmentVM)
+        public async Task<IActionResult> Delete([FromRoute] int id, DepartmentViewModel departmentVM)
         {
             if (id != departmentVM.Id)
                 return BadRequest();
@@ -113,7 +116,7 @@ namespace MVC_Project.PL.Controllers
             try
             {
                 _unitOfWork.DepartmentRepository.Delete(_mapper.Map<DepartmentViewModel, Department>(departmentVM));
-                _unitOfWork.Complete();
+                await _unitOfWork.CompleteAsync();
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

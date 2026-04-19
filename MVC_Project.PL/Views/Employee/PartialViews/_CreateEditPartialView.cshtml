@@ -3,7 +3,7 @@
 @{
     // var departments = new SelectList(ViewData["Departments"] as IEnumerable<Department>, "Id", "Name");
     // var departments = new SelectList(ViewBag.Departments, "Id", "Name");
-    var departments = new SelectList(unitOfWork.DepartmentRepository.GetAll(), "Id", "Name");
+    var departments = new SelectList(await unitOfWork.DepartmentRepository.GetAllAsync(), "Id", "Name");
 }
 
 <div class="form-group">
