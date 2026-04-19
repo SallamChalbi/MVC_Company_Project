@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Project.DAL.Models;
+using MVC_Project.PL.Helpers;
 using MVC_Project.PL.ViewModels;
 using System.Threading.Tasks;
 
@@ -66,6 +67,38 @@ namespace MVC_Project.PL.Controllers
                 ModelState.AddModelError(string.Empty, "Incorrect Email or Password");
             }
             return View(model);
+        }
+
+        public IActionResult ForgotPassword()
+        { 
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if(ModelState.IsValid) 
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email!);
+                if (user is not null) 
+                {
+                    var Token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetLink = Url.Action("ResetPassword", "Account", new { email = user.Email, token = Token }, Request.Scheme);
+                    var email = new Email()
+                    {
+                        Subject = "Reset Password",
+                        Body = passwordResetLink,
+                        Recipient = model.Email
+                    };
+                    EmailSettings.SendEmail(email);
+                    return RedirectToAction(nameof(CheckYourInbox));
+                }
+                ModelState.AddModelError(string.Empty, "Email is not Valid!");
+            }
+            return View(model);
+        }
+        public IActionResult CheckYourInbox()
+        {
+            return View();
         }
 
         public new async Task<IActionResult> SignOut()

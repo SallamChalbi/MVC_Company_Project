@@ -37,15 +37,15 @@ namespace MVC_Project.PL
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
-            }).AddEntityFrameworkStores<CompanyDbContext>();
-            //.AddDefaultTokenProviders();
+            }).AddEntityFrameworkStores<CompanyDbContext>()
+              .AddDefaultTokenProviders();
 
-            builder.Services.AddAuthentication(/*CookieAuthenticationDefaults.AuthenticationScheme*/);
-                            //.AddCookie(opt =>
-                            //{
-                            //    opt.LoginPath = "Account/Login";
-                            //    opt.AccessDeniedPath = "Home/Error";
-                            //});
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                            .AddCookie(opt =>
+                            {
+                                opt.LoginPath = "Account/Login";
+                                opt.AccessDeniedPath = "Home/Error";
+                            });
 
             var app = builder.Build();
 
