@@ -5,7 +5,9 @@ using MVC_Project.BLL.Interfaces;
 using MVC_Project.BLL.Repositories;
 using MVC_Project.DAL.Contexts;
 using MVC_Project.DAL.Models;
+using MVC_Project.PL.Helpers;
 using MVC_Project.PL.MappingProfiles;
+using MVC_Project.PL.Settings;
 
 namespace MVC_Project.PL
 {
@@ -46,6 +48,9 @@ namespace MVC_Project.PL
                                 opt.LoginPath = "Account/Login";
                                 opt.AccessDeniedPath = "Home/Error";
                             });
+
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+            builder.Services.AddTransient<EmailSettings, EmailSettings>();
 
             var app = builder.Build();
 

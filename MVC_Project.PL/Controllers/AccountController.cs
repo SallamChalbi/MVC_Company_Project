@@ -11,11 +11,13 @@ namespace MVC_Project.PL.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly EmailSettings _emailSettings;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, EmailSettings emailSettings)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSettings = emailSettings;
         }
         public IActionResult Register()
         {
@@ -74,7 +76,7 @@ namespace MVC_Project.PL.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<IActionResult> SendResetPasswordUrl(ForgotPasswordViewModel model)
         {
             if(ModelState.IsValid) 
             {
@@ -89,7 +91,8 @@ namespace MVC_Project.PL.Controllers
                         Body = passwordResetLink,
                         Recipient = model.Email
                     };
-                    EmailSettings.SendEmail(email);
+                    //EmailSettings.SendEmail(email);
+                    _emailSettings.SendEmail(email);
                     return RedirectToAction(nameof(CheckYourInbox));
                 }
                 ModelState.AddModelError(string.Empty, "Email is not Valid!");
