@@ -121,5 +121,33 @@ namespace MVC_Project.PL.Controllers
             }
             return View(userVM);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string? id)
+        {
+            return await Details(id, "Delete");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Take Id from browser only
+        public async Task<IActionResult> Delete([FromRoute] string id, UserViewModel userVM)
+        {
+            if (id != userVM.Id)
+                return BadRequest();
+
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id);
+                if (user is not null)
+                    await _userManager.DeleteAsync(user);
+                
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return View(userVM);
+        }
     }
 }
