@@ -780,6 +780,23 @@ input.checkbox {
         pointer-events: none;
     }
 
+.forgot-password {
+    text-align: right;
+    /*margin-top: 5px;*/
+}
+
+    .forgot-password a {
+        font-size: 0.85em;
+        color: #fff;
+        text-decoration: none;
+        opacity: 0.8;
+    }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            opacity: 1;
+        }
+
 .text-danger{
     color: red;
 }
