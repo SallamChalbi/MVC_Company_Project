@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.DAL.Models;
+using MVC_Project.PL.Helpers;
 using MVC_Project.PL.ViewModels;
 using System.Buffers;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace MVC_Project.PL.Controllers
             _signInManager = signInManager;
             _mapper = mapper;
         }
+
         public async Task<IActionResult> Index(string email)
         {
             if (string.IsNullOrEmpty(email))
@@ -83,6 +85,41 @@ namespace MVC_Project.PL.Controllers
             if (user is null)
                 return NotFound();
             return View(viewName, _mapper.Map<ApplicationUser, UserViewModel>(user));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string? id)
+        {
+            //ViewBag.Departments = departments;
+            return await Details(id, "Edit");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Take Id from browser only
+        public async Task<IActionResult> Edit([FromRoute] string id, UserViewModel userVM)
+        {
+            if (id != userVM.Id)
+                return BadRequest();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = await _userManager.FindByIdAsync(id);
+                    if(user is not null)
+                    {
+                        user.FName = userVM.FName;
+                        user.LName = userVM.LName;
+                        user.PhoneNumber = userVM.PhoneNumber;
+
+                        await _userManager.UpdateAsync(user);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+            return View(userVM);
         }
     }
 }
