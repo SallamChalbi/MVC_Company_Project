@@ -45,21 +45,21 @@ namespace MVC_Project.PL.Controllers
             }
         }
 
-        //[HttpGet]
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Create(RoleViewModel roleVM)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var mappedRole = _mapper.Map<RoleViewModel, IdentityRole>(roleVM);
-        //        await _roleManager.CreateAsync(mappedRole);
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(roleVM);
-        //}
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(RoleViewModel roleVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var mappedRole = _mapper.Map<RoleViewModel, IdentityRole>(roleVM);
+                await _roleManager.CreateAsync(mappedRole);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(roleVM);
+        }
     }
 }
