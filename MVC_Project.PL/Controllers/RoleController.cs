@@ -61,5 +61,76 @@ namespace MVC_Project.PL.Controllers
             }
             return View(roleVM);
         }
+
+        public async Task<IActionResult> Details(string? id, string viewName = "Details")
+        {
+            if (id is null)
+                return BadRequest();
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role is null)
+                return NotFound();
+            return View(viewName, _mapper.Map<IdentityRole, RoleViewModel>(role));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string? id)
+        {
+            //ViewBag.Departments = departments;
+            return await Details(id, "Edit");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Take Id from browser only
+        public async Task<IActionResult> Edit([FromRoute] string id, RoleViewModel roleVM)
+        {
+            if (id != roleVM.Id)
+                return BadRequest();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var role = await _roleManager.FindByIdAsync(id);
+                    if (role is not null)
+                    {
+                        role.Name = roleVM.RoleName;
+
+                        await _roleManager.UpdateAsync(role);
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+            return View(roleVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(string? id)
+        {
+            return await Details(id, "Delete");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Take Id from browser only
+        public async Task<IActionResult> Delete([FromRoute] string id, RoleViewModel roleVM)
+        {
+            if (id != roleVM.Id)
+                return BadRequest();
+
+            try
+            {
+                var role = await _roleManager.FindByIdAsync(id);
+                if (role is not null)
+                    await _roleManager.DeleteAsync(role);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return View(roleVM);
+        }
     }
 }
