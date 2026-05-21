@@ -50,7 +50,10 @@ namespace MVC_Project.PL
                             });
 
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
-            builder.Services.AddTransient<EmailSettings, EmailSettings>();
+            builder.Services.AddTransient<IEmailSettings, EmailSettings>();
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+            builder.Services.AddTransient<ISmsService, SmsService>();
 
             var app = builder.Build();
 

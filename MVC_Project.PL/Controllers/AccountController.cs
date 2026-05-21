@@ -11,13 +11,19 @@ namespace MVC_Project.PL.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly EmailSettings _emailSettings;
+        private readonly IEmailSettings _emailSettings;
+        private readonly ISmsService _smsService;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, EmailSettings emailSettings)
+        public AccountController(
+            UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager,
+            IEmailSettings emailSettings,
+            ISmsService smsService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSettings = emailSettings;
+            _smsService = smsService;
         }
         public IActionResult Register()
         {
@@ -94,6 +100,28 @@ namespace MVC_Project.PL.Controllers
                     //EmailSettings.SendEmail(email);
                     _emailSettings.SendEmail(email);
                     return RedirectToAction(nameof(CheckYourInbox));
+                }
+                ModelState.AddModelError(string.Empty, "Email is not Valid!");
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> SendResetPasswordSms(ForgotPasswordViewModel model)
+        {
+            if(ModelState.IsValid) 
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email!);
+                if (user is not null) 
+                {
+                    var Token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var passwordResetCode = Url.Action("ResetPassword", "Account", new { email = user.Email, token = Token }, Request.Scheme);
+                    var sms = new SmsMessage()
+                    {
+                        PhoneNumber = user.PhoneNumber,
+                        Body = passwordResetCode
+                    };
+                    _smsService.SendSms(sms);
+                    return Ok("Check Your Phone");
                 }
                 ModelState.AddModelError(string.Empty, "Email is not Valid!");
             }
