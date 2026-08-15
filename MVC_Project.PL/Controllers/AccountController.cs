@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Project.DAL.Models;
 using MVC_Project.PL.Helpers;
@@ -25,11 +27,11 @@ namespace MVC_Project.PL.Controllers
             _emailSettings = emailSettings;
             _smsService = smsService;
         }
+        
         public IActionResult Register()
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -76,6 +78,28 @@ namespace MVC_Project.PL.Controllers
             }
             return View(model);
         }
+        
+        public IActionResult GoogleLogin()
+        {
+            var prop = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+            return Challenge(prop, GoogleDefaults.AuthenticationScheme);
+        }
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            var claims = result.Principal!.Identities.FirstOrDefault()!.Claims.Select(
+                claim => new
+                {
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+                    claim.Type,
+                    claim.Value
+                });
+            return RedirectToAction("Index", "Home");
+        }
 
         public IActionResult ForgotPassword()
         { 
@@ -103,7 +127,7 @@ namespace MVC_Project.PL.Controllers
                 }
                 ModelState.AddModelError(string.Empty, "Email is not Valid!");
             }
-            return View(model);
+            return View("ForgotPassword", model);
         }
         [HttpPost]
         public async Task<IActionResult> SendResetPasswordSms(ForgotPasswordViewModel model)
@@ -125,7 +149,7 @@ namespace MVC_Project.PL.Controllers
                 }
                 ModelState.AddModelError(string.Empty, "Email is not Valid!");
             }
-            return View(model);
+            return View("ForgotPassword", model);
         }
         public IActionResult CheckYourInbox()
         {
