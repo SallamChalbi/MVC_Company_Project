@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.BLL.Interfaces;
@@ -54,6 +55,17 @@ namespace MVC_Project.PL
 
             builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
             builder.Services.AddTransient<ISmsService, SmsService>();
+
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            }).AddGoogle(o =>
+            {
+                IConfiguration GoogleAuthentication = builder.Configuration.GetSection("Authentication:Google");
+                o.ClientId = GoogleAuthentication["ClientId"]!;
+                o.ClientSecret = GoogleAuthentication["ClientSecret"]!;
+            });
 
             var app = builder.Build();
 
